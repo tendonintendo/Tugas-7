@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pencarian Kode Pos Indonesia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #007BFF;
+      background-color: #f0f8ff;
+      border-radius: 5px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Pencarian Kode Pos Indonesia</h2>
+    <form id="postalForm">
+      <div class="form-group">
+        <label for="provinsi">Provinsi</label>
+        <select id="provinsi" name="provinsi">
+          <option value="">-- Pilih Provinsi --</option>
+          <option value="Jawa Barat">Jawa Barat</option>
+          <option value="Jawa Tengah">Jawa Tengah</option>
+          <option value="Jawa Timur">Jawa Timur</option>
+          <option value="DKI Jakarta">DKI Jakarta</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="kabupaten">Kabupaten/Kota</label>
+        <select id="kabupaten" name="kabupaten" disabled>
+          <option value="">-- Pilih Kabupaten/Kota --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="kecamatan">Kecamatan</label>
+        <select id="kecamatan" name="kecamatan" disabled>
+          <option value="">-- Pilih Kecamatan --</option>
+        </select>
+      </div>
+      <button type="button" id="searchButton">Cari Kode Pos</button>
+    </form>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    const postalData = {
+      "Jawa Barat": {
+        "Bandung": {
+          "Coblong": "40131",
+          "Lengkong": "40262"
+        },
+        "Bogor": {
+          "Bogor Timur": "16141",
+          "Bogor Barat": "16112"
+        }
+      },
+      "Jawa Tengah": {
+        "Semarang": {
+          "Banyumanik": "50267",
+          "Candisari": "50253"
+        },
+        "Surakarta": {
+          "Laweyan": "57148",
+          "Pasar Kliwon": "57144"
+        }
+      }
+    };
+
+    const provinsiSelect = document.getElementById('provinsi');
+    const kabupatenSelect = document.getElementById('kabupaten');
+    const kecamatanSelect = document.getElementById('kecamatan');
+    const outputDiv = document.getElementById('output');
+
+    provinsiSelect.addEventListener('change', function () {
+      const selectedProvinsi = this.value;
+      kabupatenSelect.innerHTML = '<option value="">-- Pilih Kabupaten/Kota --</option>';
+      kecamatanSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+      kabupatenSelect.disabled = true;
+      kecamatanSelect.disabled = true;
+
+      if (selectedProvinsi && postalData[selectedProvinsi]) {
+        Object.keys(postalData[selectedProvinsi]).forEach(kabupaten => {
+          const option = document.createElement('option');
+          option.value = kabupaten;
+          option.textContent = kabupaten;
+          kabupatenSelect.appendChild(option);
+        });
+        kabupatenSelect.disabled = false;
+      }
+    });
+
+    kabupatenSelect.addEventListener('change', function () {
+      const selectedProvinsi = provinsiSelect.value;
+      const selectedKabupaten = this.value;
+      kecamatanSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+      kecamatanSelect.disabled = true;
+
+      if (selectedKabupaten && postalData[selectedProvinsi][selectedKabupaten]) {
+        Object.keys(postalData[selectedProvinsi][selectedKabupaten]).forEach(kecamatan => {
+          const option = document.createElement('option');
+          option.value = kecamatan;
+          option.textContent = kecamatan;
+          kecamatanSelect.appendChild(option);
+        });
+        kecamatanSelect.disabled = false;
+      }
+    });
+
+    document.getElementById('searchButton').addEventListener('click', function () {
+      const selectedProvinsi = provinsiSelect.value;
+      const selectedKabupaten = kabupatenSelect.value;
+      const selectedKecamatan = kecamatanSelect.value;
+
+      if (selectedProvinsi && selectedKabupaten && selectedKecamatan) {
+        const kodePos = postalData[selectedProvinsi][selectedKabupaten][selectedKecamatan];
+        outputDiv.innerHTML = `<strong>Kode Pos:</strong> ${kodePos}<br><strong>Daerah:</strong> ${selectedKecamatan}, ${selectedKabupaten}, ${selectedProvinsi}`;
+      } else {
+        outputDiv.innerHTML = '<span style="color: red;">Mohon lengkapi semua pilihan!</span>';
+      }
+    });
+  </script>
+</body>
+</html>

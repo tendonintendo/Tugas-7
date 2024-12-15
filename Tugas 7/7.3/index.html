@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Linked Dropdowns</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #007BFF;
+      background-color: #f0f8ff;
+      border-radius: 5px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Dynamic Linked Dropdowns</h2>
+    <form id="linkedDropdownForm">
+      <div class="form-group">
+        <label for="authors">Author</label>
+        <select id="authors" name="authors">
+          <option value="">-- Select Author --</option>
+          <option value="dazai">Osamu Dazai</option>
+          <option value="murakami">Haruki Murakami</option>
+          <option value="austen">Jane Austen</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="books">Books</label>
+        <select id="books" name="books" disabled>
+          <option value="">-- Select Book --</option>
+        </select>
+      </div>
+      <button type="button" id="showSelection">Show Selected</button>
+    </form>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    const linkedData = {
+      "dazai": ["No Longer Human", "The Setting Sun", "Run, Melos!"],
+      "murakami": ["Norwegian Wood", "Kafka on the Shore", "1Q84"],
+      "austen": ["Pride and Prejudice", "Sense and Sensibility", "Emma"]
+    };
+
+    const authorsDropdown = document.getElementById('authors');
+    const booksDropdown = document.getElementById('books');
+    const outputDiv = document.getElementById('output');
+
+    authorsDropdown.addEventListener('change', function () {
+      const selectedAuthor = this.value;
+      booksDropdown.innerHTML = '<option value="">-- Select Book --</option>';
+      booksDropdown.disabled = true;
+
+      if (selectedAuthor && linkedData[selectedAuthor]) {
+        linkedData[selectedAuthor].forEach(book => {
+          const option = document.createElement('option');
+          option.value = book;
+          option.textContent = book;
+          booksDropdown.appendChild(option);
+        });
+        booksDropdown.disabled = false;
+      }
+    });
+
+    document.getElementById('showSelection').addEventListener('click', function () {
+      const selectedAuthor = authorsDropdown.options[authorsDropdown.selectedIndex].text;
+      const selectedBook = booksDropdown.value;
+
+      if (selectedAuthor && selectedBook) {
+        outputDiv.innerHTML = `<strong>Author:</strong> ${selectedAuthor}<br><strong>Book:</strong> ${selectedBook}`;
+      } else {
+        outputDiv.innerHTML = '<span style="color: red;">Please select both an author and a book!</span>';
+      }
+    });
+  </script>
+</body>
+</html>
